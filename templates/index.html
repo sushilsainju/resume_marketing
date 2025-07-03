@@ -60,18 +60,33 @@
               Upload your recruiter list and resume to send personalized emails
             </p>
           </div>
-          <!-- Send Test Email Button -->
-          <div class="flex justify-center">
-            <button
-              type="submit"
-              id="send-test-email-btn"
-              class="inline-flex items-center px-8 py-4 bg-green-500 text-white rounded-xl hover:bg-primary-600 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-lg"
+          <!-- Progress UI -->
+          <div id="progress-container" style="display: none; margin-top: 1rem">
+            <div
+              class="progress-bar-wrapper"
+              style="
+                background-color: #eee;
+                border-radius: 6px;
+                height: 20px;
+                width: 100%;
+              "
             >
-              <span class="material-symbols-outlined bg-green-500 mr-3"
-                >send</span
-              >
-              Send Test Email
-            </button>
+              <div
+                id="progress-bar"
+                style="
+                  background-color: #4caf50;
+                  width: 0%;
+                  height: 100%;
+                  border-radius: 6px;
+                "
+              ></div>
+            </div>
+            <p
+              id="progress-text"
+              style="font-size: 14px; color: #555; margin-top: 5px"
+            >
+              Waiting to start...
+            </p>
           </div>
 
           <!-- Begin Form -->
@@ -82,99 +97,114 @@
             enctype="multipart/form-data"
           >
             <div class="grid grid-cols-1 gap-8 mb-8">
-              <div class="flex flex-col md:flex-row gap-6">
+              <!-- Move Email Content Textarea to the top of the form -->
+              <div class="bg-slate-50 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-slate-700 mb-2">
+                  Email Content
+                  <span class="text-sm text-slate-500"
+                    >(supports Jinja2 placeholders)</span
+                  >
+                </h3>
+                <p class="text-xs text-slate-500 mb-4">
+                  You can personalize each message with variables like
+                  <code>{{ '{{ first_name }}' }}</code>,
+                  <code>{{ '{{ company_name }}' }}</code>, etc.
+                </p>
+                <textarea
+                  name="email_body"
+                  class="w-full h-64 p-4 border border-slate-300 rounded-lg resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Compose your email message here..."
+                >
+              Dear {{ '{{ first_name }}' }},
+
+              I hope this email finds you well. I came across your profile while researching companies like {{ '{{ company_name }}' }} and I was impressed by the work you're doing.
+
+              Please find my resume attached. I’d appreciate the opportunity to connect.
+
+              Best regards,  
+              [Your Name]
+                </textarea>
+              </div>
+              <!-- File uploaders below -->
+              <div class="flex flex-col md:flex-row gap-4">
                 <!-- Recruiter List Upload -->
                 <div
-                  class="bg-slate-50 rounded-xl p-4 border-2 border-dashed border-slate-300 hover:border-primary-400 transition-colors duration-300 flex-1"
+                  class="bg-slate-50 rounded-lg p-3 border border-slate-200 flex-1 flex items-center justify-between"
+                  style="min-width: 0;"
                 >
-                  <div class="text-center">
-                    <span
-                      class="material-symbols-outlined text-3xl text-slate-400 mb-2 block"
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="material-symbols-outlined text-xl text-slate-400"
+                      >upload_file</span
                     >
-                      upload_file
-                    </span>
-                    <h3 class="text-md font-semibold text-slate-700 mb-1">
-                      Upload Recruiter List
-                    </h3>
-                    <p class="text-xs text-slate-500 mb-3">
-                      CSV or Excel file with recruiter information
-                    </p>
-                    <input
-                      type="file"
-                      accept=".csv,.xlsx,.xls"
-                      class="hidden"
-                      id="recruiter-file"
-                      name="recruiters"
-                      required
-                    />
-                    <label
-                      for="recruiter-file"
-                      class="inline-flex items-center px-2 py-1 bg-green-500 text-white text-xs rounded-md hover:bg-green-600 transition-colors duration-200 cursor-pointer"
-                    >
-                      <span class="material-symbols-outlined mr-1 text-xs">
-                        folder_open
-                      </span>
-                      Choose File
-                    </label>
-                    <div
-                      id="recruiter-status"
-                      class="text-xs text-slate-400 mt-2"
-                    >
-                      No file selected
+                    <div class="flex flex-col min-w-0">
+                      <label
+                        for="recruiter-file"
+                        class="text-sm font-medium text-slate-700 cursor-pointer"
+                      >
+                        Recruiter List
+                      </label>
+                      <span
+                        id="recruiter-status"
+                        class="text-xs text-slate-400 truncate"
+                        >No file selected</span
+                      >
                     </div>
                   </div>
+                  <input
+                    type="file"
+                    accept=".csv,.xlsx,.xls"
+                    class="hidden"
+                    id="recruiter-file"
+                    name="recruiters"
+                    required
+                  />
+                  <label
+                    for="recruiter-file"
+                    class="ml-2 px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 cursor-pointer transition-colors"
+                    style="white-space: nowrap;"
+                  >
+                    Choose
+                  </label>
                 </div>
                 <!-- Resume Upload -->
                 <div
-                  class="bg-slate-50 rounded-xl p-4 border-2 border-dashed border-slate-300 hover:border-primary-400 transition-colors duration-300 flex-1"
+                  class="bg-slate-50 rounded-lg p-3 border border-slate-200 flex-1 flex items-center justify-between"
+                  style="min-width: 0;"
                 >
-                  <div class="text-center">
-                    <span
-                      class="material-symbols-outlined text-3xl text-slate-400 mb-2 block"
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="material-symbols-outlined text-xl text-slate-400"
+                      >description</span
                     >
-                      description
-                    </span>
-                    <h3 class="text-md font-semibold text-slate-700 mb-1">
-                      Upload Resume
-                    </h3>
-                    <p class="text-xs text-slate-500 mb-3">
-                      PDF or Word document
-                    </p>
-                    <input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      class="hidden"
-                      id="resume-file"
-                      name="resume"
-                      required
-                    />
-                    <label
-                      for="resume-file"
-                      class="inline-flex items-center px-2 py-1 bg-green-500 text-white text-xs rounded-md hover:bg-green-600 transition-colors duration-200 cursor-pointer"
-                    >
-                      <span class="material-symbols-outlined mr-1 text-xs">
-                        attach_file
-                      </span>
-                      Choose File
-                    </label>
-                    <div id="resume-status" class="text-xs text-slate-400 mt-2">
-                      No file selected
+                    <div class="flex flex-col min-w-0">
+                      <label
+                        for="resume-file"
+                        class="text-sm font-medium text-slate-700 cursor-pointer"
+                      >
+                        Resume
+                      </label>
+                      <span
+                        id="resume-status"
+                        class="text-xs text-slate-400 truncate"
+                        >No file selected</span
+                      >
                     </div>
                   </div>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    class="hidden"
+                    id="resume-file"
+                    name="resume"
+                    required
+                  />
+                  <label
+                    for="resume-file"
+                    class="ml-2 px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 cursor-pointer transition-colors"
+                    style="white-space: nowrap;"
+                  >
+                    Choose
+                  </label>
                 </div>
-              </div>
-              <!-- Email Content Textarea -->
-              <div class="bg-slate-50 rounded-xl p-6">
-                <h3 class="text-lg font-semibold text-slate-700 mb-4">
-                  Email Content
-                </h3>
-                <textarea
-                  name="email_body"
-                  class="w-full h-64 p-4 border border-slate-300 rounded-lg resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Compose your email message here..."
-                >
-Dear [Recruiter Name], I hope this email finds you well. I am writing to express my interest in potential opportunities within your organization. Please find my resume attached for your review. I would welcome the opportunity to discuss how my skills and experience align with your current openings. Thank you for your time and consideration. Best regards, [Your Name]</textarea
-                >
               </div>
             </div>
 
@@ -242,116 +272,152 @@ Dear [Recruiter Name], I hope this email finds you well. I am writing to express
                 </table>
               </div>
             </div>
-
-            <!-- Send Emails Button -->
-            <div class="flex justify-center">
+            <!-- Action Buttons -->
+            <div class="flex justify-center gap-4 mt-6">
+              <button
+                type="button"
+                id="send-test-email-btn"
+                class="inline-flex items-center px-8 py-4 bg-green-500 text-white rounded-xl hover:bg-green-600 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-lg"
+              >
+                <span class="material-symbols-outlined bg-green-500 mr-3">send</span>
+                Send Test Email
+              </button>
               <button
                 type="submit"
-                id="send-emails-btn"
-                class="inline-flex items-center px-8 py-4 bg-green-500 text-white rounded-xl hover:bg-primary-600 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-lg"
+                id="send-bulk-email-btn"
+                class="inline-flex items-center px-8 py-4 bg-green-500 text-white rounded-xl hover:bg-green-600 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-lg"
               >
-                <span class="material-symbols-outlined bg-green-500 mr-3"
-                  >send</span
-                >
+                <span class="material-symbols-outlined bg-green-500 mr-3">send</span>
                 Send Emails to All Recruiters
               </button>
             </div>
           </form>
           <!-- End Form -->
 
-          <!-- Confirmation Modal (hidden initially) -->
-          <div
-            id="confirmation-modal"
-            class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300"
-            style="display: none"
-          >
-            <div
-              class="bg-white rounded-2xl p-8 max-w-md mx-4 transform scale-95 hover:scale-100 transition-transform duration-200"
-            >
-              <div class="text-center mb-6">
+                  </div>
+                </div>
+              </div>
+              <!-- Confirmation Modal (hidden initially) -->
+              <div
+                id="confirmation-modal"
+                class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300"
+                style="display: none; z-index: 50;"
+              >
                 <div
-                  class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                  class="bg-white rounded-2xl p-8 max-w-md mx-4 transform scale-95 hover:scale-100 transition-transform duration-200"
                 >
-                  <span
-                    class="material-symbols-outlined text-3xl text-primary-500"
-                  >
-                    mail
-                  </span>
+                  <div class="text-center mb-6">
+                    <div
+                      class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                    >
+                      <span
+                        class="material-symbols-outlined text-3xl text-green-500"
+                      >
+                        mail
+                      </span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">
+                      Confirm Email Send
+                    </h3>
+                    <p class="text-slate-600">
+                      Are you sure you want to send emails to all {{ recruiters|length }} recruiters?
+                    </p>
+                  </div>
+                  <div class="bg-slate-50 rounded-lg p-4 mb-6">
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-slate-600">Recipients:</span>
+                      <span class="font-semibold text-slate-800"
+                        >{{ recruiters|length }} recruiters</span
+                      >
+                    </div>
+                    <div class="flex items-center justify-between text-sm mt-2">
+                      <span class="text-slate-600">Attachment:</span>
+                      <span class="font-semibold text-slate-800">
+                        {% if resume_file %} {{ resume_file }} {% else %} No file {% endif %}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex space-x-4">
+                    <button
+                      class="flex-1 px-4 py-3 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors duration-200 font-medium"
+                      data-handler="handler_1"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      class="flex-1 px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 hover:scale-105 transition-all duration-200 font-medium"
+                      data-handler="handler_2"
+                    >
+                      Send Emails
+                    </button>
+                  </div>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">
-                  Confirm Email Send
-                </h3>
-                <p class="text-slate-600">
-                  Are you sure you want to send emails to all {{
-                  recruiters|length }} recruiters?
-                </p>
               </div>
-              <div class="bg-slate-50 rounded-lg p-4 mb-6">
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-slate-600">Recipients:</span>
-                  <span class="font-semibold text-slate-800"
-                    >{{ recruiters|length }} recruiters</span
-                  >
-                </div>
-                <div class="flex items-center justify-between text-sm mt-2">
-                  <span class="text-slate-600">Attachment:</span>
-                  <span class="font-semibold text-slate-800">
-                    {% if resume_file %} {{ resume_file }} {% else %} No file {%
-                    endif %}
-                  </span>
-                </div>
-              </div>
-              <div class="flex space-x-4">
-                <button
-                  class="flex-1 px-4 py-3 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors duration-200 font-medium"
-                  data-handler="handler_1"
-                >
-                  Cancel
-                </button>
-                <button
-                  class="flex-1 px-4 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 hover:scale-105 transition-all duration-200 font-medium"
-                  data-handler="handler_2"
-                >
-                  Send Emails
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Success Modal (hidden initially) -->
-          <div
-            id="success-modal"
-            class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300"
-            style="display: none"
-          >
-            <div
-              class="bg-white rounded-2xl p-8 max-w-md mx-4 transform scale-95 hover:scale-100 transition-transform duration-200"
-            >
-              <div class="text-center">
+              <!-- Success Modal (hidden initially) -->
+              <div
+                id="success-modal"
+                class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300"
+                style="display: none; z-index: 50;"
+              >
                 <div
-                  class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                  class="bg-white rounded-2xl p-8 max-w-md mx-4 transform scale-95 hover:scale-100 transition-transform duration-200"
                 >
-                  <span
-                    class="material-symbols-outlined text-3xl text-green-500"
-                  >
-                    check_circle
-                  </span>
+                  <div class="text-center">
+                    <div
+                      class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                    >
+                      <span
+                        class="material-symbols-outlined text-3xl text-green-500"
+                      >
+                        check_circle
+                      </span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">
+                      Emails Sent Successfully!
+                    </h3>
+                    <p class="text-slate-600 mb-6">
+                      Your resume has been sent to all {{ recruiters|length }}
+                      recruiters. You should receive confirmation emails shortly.
+                    </p>
+                    <button
+                      class="w-full px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 hover:scale-105 transition-all duration-200 font-medium"
+                      data-handler="handler_3"
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">
-                  Emails Sent Successfully!
-                </h3>
-                <p class="text-slate-600 mb-6">
-                  Your resume has been sent to all {{ recruiters|length }}
-                  recruiters. You should receive confirmation emails shortly.
-                </p>
-                <button
-                  class="w-full px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 hover:scale-105 transition-all duration-200 font-medium"
-                  data-handler="handler_3"
-                >
-                  Close
-                </button>
               </div>
-            </div>
-          </div>
+              <!-- Test Email Success Modal (hidden initially) -->
+              <div
+                id="test-email-success-modal"
+                class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300"
+                style="display: none; z-index: 50;"
+              >
+                <div class="bg-white rounded-2xl p-8 max-w-md mx-4 transform scale-95 hover:scale-100 transition-transform duration-200">
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span class="material-symbols-outlined text-3xl text-green-500">
+                        check_circle
+                      </span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">
+                      Test Email Sent!
+                    </h3>
+                    <p class="text-slate-600 mb-6" id="test-email-success-message">
+                      Your test email was sent successfully.
+                    </p>
+                    <button
+                      class="w-full px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 hover:scale-105 transition-all duration-200 font-medium"
+                      id="close-test-email-success"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </body>
+          </html>
         </div>
       </div>
     </div>
