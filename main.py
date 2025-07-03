@@ -1,15 +1,20 @@
-from flask import Flask, redirect, url_for, render_template, session, request, jsonify
+from flask import Flask, redirect, url_for, render_template, session, request, jsonify, g
 from dotenv import load_dotenv
 import os
 from file_processor import FileProcessor
 from email_service import EmailService
 from authlib.integrations.flask_client import OAuth
 from concurrent.futures import ThreadPoolExecutor
+from uuid import uuid4  
 
 
 # Load environment variables from .env file
 load_dotenv()
 executor = ThreadPoolExecutor(max_workers=3)
+
+
+# Simple in-memory store
+progress_tracker = {}
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -61,6 +66,7 @@ def logout():
 # API route to handle sending emails
 @app.route("/send-emails", methods=["POST"])
 def send_emails():
+    
     resume_file = request.files.get("resume")
     recruiters_file = request.files.get("recruiters")
     email_body = request.form.get("email_body")
@@ -72,6 +78,14 @@ def send_emails():
     recruiters_file.stream.seek(0)
     processor = FileProcessor(recruiters_file)
     recruiter_list = processor.parse_recruiters()
+
+    # Generate a unique job ID
+    job_id = str(uuid4())
+    progress_tracker[job_id] = {
+        "total": len(recruiter_list),
+        "sent": 0,
+        "failed": 0
+    }
 
     # Get token info from session
     token = session.get("google_oauth_token")
@@ -96,9 +110,26 @@ def send_emails():
     }]
 
     # Fire off background task
-    executor.submit(email_service.send_bulk_emails, sender_email, recruiter_list, subject, email_body, attachments)
+    # executor.submit(email_service.send_bulk_emails, sender_email, recruiter_list, subject, email_body, attachments)
 
-    return jsonify({"status": "success", "message": "Emails are being sent in the background."})
+    # return jsonify({"status": "success", "message": "Emails are being sent in the background."})
+    # Fire off background task
+    executor.submit(
+        email_service.send_bulk_emails_with_progress,
+        sender_email,
+        recruiter_list,
+        subject,
+        email_body,
+        attachments,
+        job_id,
+        progress_tracker
+    )
+
+    return jsonify({
+        "status": "success",
+        "message": "Emails are being sent in the background.",
+        "job_id": job_id
+    })
 
 # API route to handle recruiters file upload
 @app.route("/upload-recruiters", methods=["POST"])
@@ -128,6 +159,9 @@ def send_test_email():
             'client_id': os.getenv("GOOGLE_CLIENT_ID"),
             'client_secret': os.getenv("GOOGLE_CLIENT_SECRET"),
             'access_token': token.get('access_token')
+            # need to use refresh_token if available, having issue getting it from session 
+            # probably because of the app is in testing mode and not yet verified
+            # 'refresh_token': token.get('refresh_token')  # Optional, but recommended for
         }
 
     # if not token_info or not token_info['refresh_token']:
@@ -136,7 +170,7 @@ def send_test_email():
 
     email_service = EmailService(token_info)
 
-    recipient = data.get('recipient') or 'sushil.sainju@gmail.com'
+    recipient = session.get('user', {}).get('email') or data.get('recipient')
     if not recipient:
         return jsonify({'error': 'Recipient email is required.'}), 400
 
@@ -158,6 +192,13 @@ def login():
 def login_google():
     redirect_uri = url_for('google_auth_callback', _external=True)
     return oauth.google.authorize_redirect(redirect_uri)
+
+@app.route("/progress/<job_id>")
+def get_progress(job_id):
+    progress = progress_tracker.get(job_id)
+    if not progress:
+        return jsonify({"status": "not_found"}), 404
+    return jsonify(progress)
 
 
 # Entry point to run the Flask app
