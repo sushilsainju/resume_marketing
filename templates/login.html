@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Resume Marketing Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+      <h1 class="text-3xl font-bold text-slate-800 mb-6 text-center">
+        Sign in
+      </h1>
+      <p class="text-slate-600 mb-8 text-center">
+        Sign in with your Google account to continue.
+      </p>
+      <div class="flex justify-center">
+        <a
+          href="{{ url_for('login_google') }}"
+          class="inline-flex items-center px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-semibold text-lg shadow-md"
+        >
+          <svg class="w-6 h-6 mr-2" viewBox="0 0 48 48">
+            <g>
+              <path
+                fill="#4285F4"
+                d="M44.5,20H24v8.5h11.7C34.7,33.1,30.1,36,24,36c-6.6,0-12-5.4-12-12s5.4-12,12-12c3.1,0,5.9,1.1,8.1,2.9l6.1-6.1C34.3,6.5,29.4,4,24,4C12.9,4,4,12.9,4,24s8.9,20,20,20c11,0,19.7-8,19.7-20C44.7,22.7,44.6,21.3,44.5,20z"
+              />
+              <path
+                fill="#34A853"
+                d="M6.3,14.7l7,5.1C15.5,17.1,19.4,14,24,14c3.1,0,5.9,1.1,8.1,2.9l6.1-6.1C34.3,6.5,29.4,4,24,4C16.3,4,9.4,8.8,6.3,14.7z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M24,44c5.1,0,9.8-1.7,13.4-4.7l-6.2-5.1C29.8,36.5,27,37.5,24,37.5c-6.1,0-10.7-2.9-13.7-7.1l-7,5.4C9.4,39.2,16.3,44,24,44z"
+              />
+              <path
+                fill="#EA4335"
+                d="M44.5,20H24v8.5h11.7c-1.7,4.1-6.1,7-11.7,7c-6.1,0-10.7-2.9-13.7-7.1l-7,5.4C9.4,39.2,16.3,44,24,44c5.1,0,9.8-1.7,13.4-4.7l-6.2-5.1C29.8,36.5,27,37.5,24,37.5c-6.1,0-10.7-2.9-13.7-7.1l-7,5.4C9.4,39.2,16.3,44,24,44z"
+              />
+            </g>
+          </svg>
+          Sign in with Google
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
