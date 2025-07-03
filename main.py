@@ -170,7 +170,7 @@ def send_test_email():
 
     email_service = EmailService(token_info)
 
-    recipient = data.get('recipient') or 'sushil.sainju@gmail.com'
+    recipient = session.get('user', {}).get('email') or data.get('recipient')
     if not recipient:
         return jsonify({'error': 'Recipient email is required.'}), 400
 
