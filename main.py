@@ -204,4 +204,6 @@ def get_progress(job_id):
 # Entry point to run the Flask app
 if __name__ == "__main__":
     # Run without debug mode to avoid _multiprocessing errors in some environments
-    app.run(debug=False)
+    # app.run(debug=False)
+    app.run(host='0.0.0.0', port=5000)
+
