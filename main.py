@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") 
 
 # Allow OAuthlib to run insecure transport for development
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+# os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 oauth = OAuth(app)
 
