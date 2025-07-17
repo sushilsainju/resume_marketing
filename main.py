@@ -36,7 +36,8 @@ oauth.register(
         'scope': 'openid email profile https://www.googleapis.com/auth/gmail.send',
         'access_type': 'offline',
         'prompt': 'consent'
-    }
+    },
+    redirect_uri=os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:5000/login/google/authorized")
 )
 
 
