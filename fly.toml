@@ -1,9 +1,10 @@
-# fly.toml app configuration file generated for personalized-email-sender on 2025-07-11T01:04:52-05:00
+
+# fly.toml app configuration file generated for resume-marketing on 2025-07-09T06:26:54Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'personalized-email-sender'
+app = 'resume-marketing'
 primary_region = 'dfw'
 
 [build]
@@ -20,3 +21,4 @@ primary_region = 'dfw'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 1024
